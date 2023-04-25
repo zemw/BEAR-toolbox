@@ -41,10 +41,13 @@ data1=data;
 % adjust data to startdate and enddate
 % data1=data(startlocationData:endlocation,:);
 data=data(startlocationData:endlocation,:);
-
+% BUG FIX: backup original data (used in FAVAR)
+data2=data;
 
 % identify the variable strings, endogenous and exogenous
 variablestrings=names(1,2:end);
+% BUG FIX: backup original variablestrings (used in FAVAR)
+variablestrings2=variablestrings;
 
 % FAVAR: augment data and variablestrings with factors
 if favar.FAVAR==1
@@ -93,13 +96,15 @@ else
         % check first that the variable ii in endo appears in the list of variable strings
         % if not, the variable is unknown: return an error
         var=exo{ii,1};
-        check=find(strcmp(variablestrings,var));
+        % BUG FIX: FAVAR truncated variabestrings to keep only endogenous
+        % variables. Use backup variablestrings2 to source exogenous vars
+        check=find(strcmp(variablestrings2,var));
         if isempty(check)==1
             message=['Error: exogenous variable ' var ' cannot be found on the excel data spreadsheet.'];
             error('BEARmain:gensample:ExoVarNotFound', message);
         end
         % if the variable is known, go on
-        exolocation(ii,1)=find(strcmp(variablestrings,exo(ii,1)));
+        exolocation(ii,1)=find(strcmp(variablestrings2,exo(ii,1)));
     end
 end
 
@@ -116,8 +121,11 @@ end
 % Similarly, create the matrix of exogenous variables for the estimation sample
 data_exo=[];
 for ii=1:numexo
-%     data_exo=[data_exo data(startlocation:endlocation,exolocation(ii,1))];
-    data_exo=[data_exo data(:,exolocation(ii,1))];
+    % data_exo=[data_exo data(startlocation:endlocation,exolocation(ii,1))];
+    
+    % BUG FIX: FAVAR truncated the data to keep only endogenous variables.
+    % Use backup data2 to source exogenous variables
+    data_exo=[data_exo data2(:,exolocation(ii,1))];
 end
 
 
