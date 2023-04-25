@@ -62,6 +62,7 @@ favar = bear.utils.initializeFavarResults(opts);
 
 IRF         = opts.IRF;           % activate impulse response functions (1=yes, 0=no)
 IRFperiods  = opts.IRFperiods;    % number of periods for impulse response functions
+IRFcumulative=opts.IRFcumulative;
 F           = opts.F;
 FEVD        = opts.FEVD;
 HD          = opts.HD;
@@ -968,7 +969,7 @@ for iteration=1:numt % beginning of forecasting loop
         if IRF==1 || favar.IRFplot==1
             % compute posterior estimates
             if IRFt==1 || IRFt==2 || IRFt==3
-                [irf_estimates,D_estimates,gamma_estimates,favar]=bear.irfestimates(struct_irf_record,n,IRFperiods,IRFband,IRFt,D_record,gamma_record,favar);
+                [irf_estimates,D_estimates,gamma_estimates,favar]=bear.irfestimates(struct_irf_record,n,IRFperiods,IRFcumulative,IRFband,IRFt,D_record,gamma_record,favar);
             elseif IRFt==4||IRFt==5||IRFt==6
                 [irf_estimates,D_estimates,gamma_estimates,favar]=bear.irfestimates_set_identified(struct_irf_record,n,IRFperiods,IRFband,D_record,strctident,favar);
             end

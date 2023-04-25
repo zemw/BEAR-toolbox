@@ -1,4 +1,4 @@
-function [irf_estimates,D_estimates,gamma_estimates,favar]=irfestimates(irf_record,n,IRFperiods,IRFband,IRFt,D_record,gamma_record,favar)
+function [irf_estimates,D_estimates,gamma_estimates,favar]=irfestimates(irf_record,n,IRFperiods,IRFcumulative,IRFband,IRFt,D_record,gamma_record,favar)
 
 
 
@@ -84,12 +84,17 @@ if favar_FAVAR==1
         for jj=1:n
             % consider IRF periods in turn
             for kk=1:IRFperiods
+                irf_this = irf_record{ii,jj};
+                % if cumulative IRF is specified, compute cumsum for each draw
+                if IRFcumulative==1
+                    irf_this = cumsum(irf_record{ii,jj}, 2);
+                end
                 % compute first the lower bound
-                irf_estimates{ii,jj}(1,kk)=quantile(irf_record{ii,jj}(:,kk),(1-IRFband)/2)/scale;
+                irf_estimates{ii,jj}(1,kk)=quantile(irf_this(:,kk),(1-IRFband)/2)/scale;
                 % then compute the median
-                irf_estimates{ii,jj}(2,kk)=quantile(irf_record{ii,jj}(:,kk),0.5)/scale;
+                irf_estimates{ii,jj}(2,kk)=quantile(irf_this(:,kk),0.5)/scale;
                 % finally compute the upper bound
-                irf_estimates{ii,jj}(3,kk)=quantile(irf_record{ii,jj}(:,kk),1-(1-IRFband)/2)/scale;
+                irf_estimates{ii,jj}(3,kk)=quantile(irf_this(:,kk),1-(1-IRFband)/2)/scale;
             end
         end
     end
@@ -109,12 +114,17 @@ else % normal procedure without FAVARs
         for jj=1:n
             % consider IRF periods in turn
             for kk=1:IRFperiods
+                irf_this = irf_record{ii,jj};
+                % if cumulative IRF is specified, compute cumsum for each draw
+                if IRFcumulative==1
+                    irf_this = cumsum(irf_record{ii,jj}, 2);
+                end
                 % compute first the lower bound
-                irf_estimates{ii,jj}(1,kk)=quantile(irf_record{ii,jj}(:,kk),(1-IRFband)/2);
+                irf_estimates{ii,jj}(1,kk)=quantile(irf_this(:,kk),(1-IRFband)/2);
                 % then compute the median
-                irf_estimates{ii,jj}(2,kk)=quantile(irf_record{ii,jj}(:,kk),0.5);
+                irf_estimates{ii,jj}(2,kk)=quantile(irf_this(:,kk),0.5);
                 % finally compute the upper bound
-                irf_estimates{ii,jj}(3,kk)=quantile(irf_record{ii,jj}(:,kk),1-(1-IRFband)/2);
+                irf_estimates{ii,jj}(3,kk)=quantile(irf_this(:,kk),1-(1-IRFband)/2);
             end
         end
     end

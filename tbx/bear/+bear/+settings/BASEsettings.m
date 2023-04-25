@@ -63,6 +63,7 @@ classdef (Abstract) BASEsettings < matlab.mixin.CustomDisplay
         % Model options
         IRF        (1,1) logical = true;  % activate impulse response functions (1=yes, 0=no)
         IRFperiods (1,1) double  = 20;    % number of periods for impulse response functions
+        IRFcumulative (1,1) logical = false; % compute cumulative IRF
         % structural identification:
         % 1=none,
         % 2=Cholesky,
